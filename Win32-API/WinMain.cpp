@@ -1,10 +1,14 @@
 #include <Windows.h>
 #include <tchar.h>
+#include "resource.h"
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
-//int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+
+	// 0. 리소스 파일에서 스트링 가져오기
+	TCHAR szWindowName[100];
+	LoadString(hInstance, IDS_TITLE, szWindowName, 100);
 
 	// 1. Window Class 구조체 설정
 
@@ -86,7 +90,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// 3. Window 생성
 	HWND hWnd = CreateWindow(
 		strClassName, // LPCSTR lpClassName : Window Class 이름
-		TEXT("Hello World"), // LPCSTR lpWindowName : 윈도우 타이틀 이름
+		szWindowName, // LPCSTR lpWindowName : 윈도우 타이틀 이름
+		//TEXT("Hello World"), // LPCSTR lpWindowName : 윈도우 타이틀 이름
 		WS_OVERLAPPEDWINDOW, // DWORD dwStyle : 윈도우 스타일, dw(DWORD)
 		CW_USEDEFAULT, 0, // int X, int Y : 윈도우 x, y 좌표, CW(Create Window), CW_USEDEFAULT : 운영체제가 정한 기본값을 사용한다.
 		CW_USEDEFAULT, 0, // int nWidth, int nHeight : 윈도우 가로, 세로 크기(클라이언트 영역 포함)

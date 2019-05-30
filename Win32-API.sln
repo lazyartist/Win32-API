@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.572
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Test-Win32", "Test\Test.vcxproj", "{C96E7AF2-DB91-4277-AD1E-E23C0E4F36E4}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Test-Win32-API-Template", "Test-Win32-API-Template\Test-Win32-API-Template.vcxproj", "{C96E7AF2-DB91-4277-AD1E-E23C0E4F36E4}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Test-Cpp", "Test-Cpp\Test-Cpp.vcxproj", "{9A1FE274-0805-4C44-8C36-30C93E27A336}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Win32-API", "Win32-API\Win32-API.vcxproj", "{9A1FE274-0805-4C44-8C36-30C93E27A336}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
