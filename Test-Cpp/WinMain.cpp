@@ -1,6 +1,10 @@
 #include <Windows.h>
+#include <tchar.h>
+
+LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+//int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
 
 	// 1. Window Class 구조체 설정
 
@@ -38,10 +42,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	wcex.hIcon = LoadIcon(NULL, "resourceName");
 	// 방법 2. Resource.h에 define된 리소스 아이디를 MAKEINTRESOURCE를 이용해 문자열 포인터 형식으로 변경
 	// 리소스 아이디로 변경된 문자열 포인터는 유효하지 않지만 OS는 이를 ID값으로 사용하여 문자열을 찾는다.(?)
-	wcex.hIcon = LoadIcon(NULL, MAKEINTRESOURCE(IDI_APPLICATION)); // IDI_APPLICATION : 운영체제에 미리 정의된 기본 아이콘
+	wcex.hIcon = LoadIcon(NULL, IDI_APPLICATION); // IDI_APPLICATION : 운영체제에 미리 정의된 기본 아이콘
+	//wcex.hIcon = LoadIcon(NULL, MAKEINTRESOURCE(IDI_APPLICATION)); // IDI_APPLICATION : 운영체제에 미리 정의된 기본 아이콘
 
 	// 기본 작은 아이콘 지정
-	wcex.hIconSm = LoadIcon(NULL, MAKEINTRESOURCE(IDI_APPLICATION));
+	wcex.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
+	//wcex.hIconSm = LoadIcon(NULL, MAKEINTRESOURCE(IDI_APPLICATION));
 
 	// 기본 커서 지정, OS에서 미리 정의한 커서를 사용할 수 있다.
 	// IDC : ID for an cursor
@@ -77,18 +83,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	RegisterClassEx(&wcex);
 
 
-// 3. Window 생성
-HWND hWnd = CreateWindow(
-	strClassName, // LPCSTR lpClassName : Window Class 이름
-	TEXT("Hello World"), // LPCSTR lpWindowName : 윈도우 타이틀 이름
-	WS_OVERLAPPEDWINDOW, // DWORD dwStyle : 윈도우 스타일, dw(DWORD)
-	CW_USEDEFAULT, 0, // int X, int Y : 윈도우 x, y 좌표, CW(Create Window), CW_USEDEFAULT : 운영체제가 정한 기본값을 사용한다.
-	CW_USEDEFAULT, 0, // int nWidth, int nHeight : 윈도우 가로, 세로 크기(클라이언트 영역 포함)
-	nullptr, // HWND hWndParent : 부모 윈도우 핸들
-	nullptr, // HMENU hMenu : 메뉴 핸들
-	hInstance, // HINSTANCE hInstance : 응용 프로그램 인스턴스
-	nullptr // LPVOID lpParam : 생성 윈도우 정보, 여유분으로 사용하지 않는다.
-);
+	// 3. Window 생성
+	HWND hWnd = CreateWindow(
+		strClassName, // LPCSTR lpClassName : Window Class 이름
+		TEXT("Hello World"), // LPCSTR lpWindowName : 윈도우 타이틀 이름
+		WS_OVERLAPPEDWINDOW, // DWORD dwStyle : 윈도우 스타일, dw(DWORD)
+		CW_USEDEFAULT, 0, // int X, int Y : 윈도우 x, y 좌표, CW(Create Window), CW_USEDEFAULT : 운영체제가 정한 기본값을 사용한다.
+		CW_USEDEFAULT, 0, // int nWidth, int nHeight : 윈도우 가로, 세로 크기(클라이언트 영역 포함)
+		nullptr, // HWND hWndParent : 부모 윈도우 핸들
+		nullptr, // HMENU hMenu : 메뉴 핸들
+		hInstance, // HINSTANCE hInstance : 응용 프로그램 인스턴스
+		nullptr // LPVOID lpParam : 생성 윈도우 정보, 여유분으로 사용하지 않는다.
+	);
 
 
 	// 4. 윈도우 출력
@@ -113,5 +119,23 @@ HWND hWnd = CreateWindow(
 }
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
+
+	PAINTSTRUCT ps;
+	HDC hdc;
+
+	switch (message)
+	{
+	case WM_PAINT:
+		hdc = BeginPaint(hWnd, &ps);
+
+		EndPaint(hWnd, &ps);
+		break;
+	case WM_DESTROY:
+		PostQuitMessage(0);
+		break;
+	default:
+		return DefWindowProc(hWnd, message, wParam, lParam);
+	}
+
 	return 0;
 }
