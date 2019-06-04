@@ -1,5 +1,6 @@
 #include <Windows.h>
 #include <tchar.h>
+#include <stdio.h>
 #include "resource.h"
 
 HINSTANCE g_hInstance;
@@ -140,6 +141,28 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 
 	switch (message)
 	{
+	case WM_COMMAND:
+	{
+		WORD menuId = LOWORD(wParam);
+		WORD menuEvent = HIWORD(wParam);
+		const UINT strLength = 100;
+		TCHAR strBuffer[strLength];
+		_stprintf_s(strBuffer, strLength, "id:%d, event:%d", menuId, menuEvent);
+
+		switch (menuId)
+		{
+		case ID_40001:
+		case ID_40003:
+		case ID_40004:
+			 //_stprintf_s(strBuffer, strLength, "%d", menuId);
+			break;
+		default:
+			break;
+		}
+		
+		MessageBox(hWnd, strBuffer, "Title~~", MB_OK);
+	}
+		break;
 	case WM_SETCURSOR:
 		HCURSOR hCursor;
 		hCursor = LoadCursor(g_hInstance, MAKEINTRESOURCE(IDC_CURSOR1));
