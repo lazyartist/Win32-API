@@ -9,8 +9,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
 	g_hInstance = hInstance;
-		
-		
+
+
 	// 0. 리소스 파일에서 스트링 가져오기
 	TCHAR szWindowName[100];
 	LoadString(hInstance, IDS_TITLE, szWindowName, 100);
@@ -137,10 +137,13 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
 
 	PAINTSTRUCT ps;
+	LPPAINTSTRUCT lpps;
 	HDC hdc;
 
 	switch (message)
 	{
+	case WM_CREATE: // 윈도우가 처음 생성됐을 때 발생
+		break;
 	case WM_COMMAND:
 	{
 		WORD menuId = LOWORD(wParam);
@@ -154,27 +157,65 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 		case ID_40001:
 		case ID_40003:
 		case ID_40004:
-			 //_stprintf_s(strBuffer, strLength, "%d", menuId);
+			//_stprintf_s(strBuffer, strLength, "%d", menuId);
 			break;
 		default:
 			break;
 		}
-		
+
 		MessageBox(hWnd, strBuffer, "Title~~", MB_OK);
 	}
-		break;
+	break;
 	case WM_SETCURSOR:
 		HCURSOR hCursor;
 		hCursor = LoadCursor(g_hInstance, MAKEINTRESOURCE(IDC_CURSOR1));
 		SetCursor(hCursor);
 		break;
 	case WM_PAINT:
+	{
 		hdc = BeginPaint(hWnd, &ps);
 
+		COLORREF color = COLORREF RGB(255, 0, 0);
+		BYTE r = GetRValue(color);
+
+		SetTextColor(hdc, RGB(255, 0, 0));
+		SetBkColor(hdc, RGB(0, 255, 255));
+
+		TextOut(hdc, 10, 10, TEXT("hihi"), _tcslen(TEXT("hihi")));
+
+		SetPixel(hdc, 150, 150, RGB(255, 0, 0));
+		SetPixel(hdc, 151, 150, RGB(0, 255, 0));
+		SetPixel(hdc, 152, 150, RGB(0, 0, 255));
+
+		COLORREF color1 = GetPixel(hdc, 150, 150);
+		COLORREF color2 = GetPixel(hdc, 149, 149);
+
 		EndPaint(hWnd, &ps);
+
+		hdc = GetDC(hWnd);
+		ReleaseDC(hWnd, hdc);
+	}
+
+	break;
+	case WM_LBUTTONDOWN:
+	{
+		hdc = GetDC(hWnd);
+		TextOut(hdc, 100, 100, TEXT("Clicked"), _tcslen(TEXT("Clicked")));
+
+		RECT rect = { 0, 0, 300, 300 };
+		SetPixel(hdc, rand() % 300, rand() % 300, RGB(255, 0, 0));
+		InvalidateRect(hWnd, &rect, TRUE);
+		//ReleaseDC(hWnd, hdc);
+	}
+
+	break;
+	case WM_RBUTTONDOWN:
+		hdc = GetDC(hWnd);
+		TextOut(hdc, 100, 100, TEXT("Release"), _tcslen(TEXT("Release")));
+		ReleaseDC(hWnd, hdc);
 		break;
 	case WM_DESTROY:
-		PostQuitMessage(0);
+		PostQuitMessage(0); // GetMessage() 함수가 0을 반환하게 된다.
 		break;
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);
