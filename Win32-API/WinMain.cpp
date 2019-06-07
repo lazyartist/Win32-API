@@ -190,6 +190,38 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 		COLORREF color1 = GetPixel(hdc, 150, 150);
 		COLORREF color2 = GetPixel(hdc, 149, 149);
 
+		// ========== Brush ========== 
+		HBRUSH hBrush = CreateSolidBrush(RGB(0, 255, 0));
+		HBRUSH hOldBrush = (HBRUSH)SelectObject(hdc, hBrush);
+
+		// ========== Brush ========== end
+
+		// ========== Pen ==========
+		// Pen 생성
+		HPEN hPen = CreatePen(PS_DASHDOT, 1, RGB(255, 0, 0));
+		// DC에 펜 지정
+		HPEN hOldPen = (HPEN)SelectObject(hdc, hPen);
+		MoveToEx(hdc, 100, 100, NULL);
+		LineTo(hdc, 200, 100);
+
+		Rectangle(hdc, 200, 100, 250, 150);
+
+		Ellipse(hdc, 250, 150, 300, 200);
+
+		SelectObject(hdc, hOldPen);
+		BOOL bDeletePenResult = DeleteObject(hPen);
+		//LineTo(hdc, 100, 200);
+
+		TCHAR szDeletePenResult[] = TEXT("DeletePenResult: %s");
+		//TCHAR szDeletePenResult[10] = { 0, };
+		_stprintf_s(szDeletePenResult, bDeletePenResult ? TEXT("t") : TEXT("f"));
+		TextOut(hdc, 100, 205, szDeletePenResult, _tcslen(szDeletePenResult));
+
+		// ========== Pen ========== end
+
+
+		
+
 		EndPaint(hWnd, &ps);
 
 		hdc = GetDC(hWnd);
