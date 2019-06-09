@@ -220,7 +220,44 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 		// ========== Pen ========== end
 
 
-		
+		// ========== Bitmap ==========
+		// 비트맵 헤더
+		BITMAP resBitmapHeader; // 리소스 비트맵 헤더
+		BITMAP fileBitmapHeader; // 파일 비트맵 헤더
+
+		// 리소스의 비트맵 불러오기
+		HBITMAP hResBitmap = LoadBitmap(g_hInstance, MAKEINTRESOURCE(IDB_BITMAP1));
+
+		// 파일의 비트맵 불러오기, 파일은 프로젝트 폴더가 기준이다.(프로젝트 폴더 밖의 Debug 폴더에 넣지 않는다)
+		HBITMAP hFileBitmap = (HBITMAP)LoadImage(NULL, TEXT("zzal.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+
+		// 비트맵 헤더를 읽어들임
+		GetObject(hResBitmap, sizeof(BITMAP), &resBitmapHeader);
+		GetObject(hFileBitmap, sizeof(BITMAP), &fileBitmapHeader);
+
+		// Memory DC 생성
+		HDC hResMemDC = CreateCompatibleDC(hdc);
+		HDC hFileMemDC = CreateCompatibleDC(hdc);
+
+		// Memory DC에 비트맵 선택
+		SelectObject(hResMemDC, hResBitmap);
+		SelectObject(hFileMemDC, hFileBitmap);
+
+		// Memory DC를 화면 DC에 복사
+		BitBlt(hdc, 300, 300, resBitmapHeader.bmWidth, resBitmapHeader.bmHeight, hResMemDC, 0, 0, SRCCOPY);
+
+		//BitBlt(hdc, 300 + resBitmapHeader.bmWidth, 300, fileBitmapHeader.bmWidth, fileBitmapHeader.bmHeight, hFileMemDC, 0, 0, SRCCOPY);
+		TransparentBlt(hdc, 300 + resBitmapHeader.bmWidth, 300, fileBitmapHeader.bmWidth, fileBitmapHeader.bmHeight, hFileMemDC, 0, 0, fileBitmapHeader.bmWidth, fileBitmapHeader.bmHeight, RGB(231, 223, 220));
+
+
+		// 생성했던 비트맵과 Memory DC를 제거
+		DeleteObject(hResBitmap);
+		DeleteObject(hFileBitmap);
+		DeleteDC(hResMemDC);
+		DeleteDC(hFileMemDC);
+		// ========== Bitmap ========== end
+
+
 
 		EndPaint(hWnd, &ps);
 

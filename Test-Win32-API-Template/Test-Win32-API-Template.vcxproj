@@ -166,6 +166,7 @@
     <ResourceCompile Include="Test.rc" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="bitmap1.bmp" />
     <Image Include="small.ico" />
     <Image Include="Test.ico" />
   </ItemGroup>
