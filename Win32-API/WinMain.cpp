@@ -11,8 +11,8 @@ HWND g_hMainWnd;
 TCHAR g_str[100];
 UINT g_strIndex = 0;
 POINT g_movableTextPosition = { 10, 150 };
-BOOL g_bF1KeyDown = FALSE;
-BOOL g_bDragging = false;
+bool g_bF1KeyDown = FALSE;
+bool g_bDragging = false;
 POINT g_dragStartPosition = { 0, 0 };
 UINT g_nTimerCount1 = 0;
 UINT g_nTimerCount2 = 0;
@@ -23,7 +23,7 @@ TCHAR g_szDialogStr[100] = { 0, };
 
 HWND g_hModelessDialog;
 
-TCHAR BoolToChar(BOOL bBool);
+TCHAR BoolToChar(bool bBool);
 VOID CALLBACK TimerProc(HWND hWnd, UINT message, UINT_PTR id, DWORD time);
 INT_PTR CALLBACK DialogProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 INT_PTR CALLBACK DialogProc_Modeless(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -292,7 +292,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 		Ellipse(hdc, 250, 150, 300, 200);
 
 		SelectObject(hdc, hOldPen);
-		BOOL bDeletePenResult = DeleteObject(hPen);
+		bool bDeletePenResult = DeleteObject(hPen);
 		//LineTo(hdc, 100, 200);
 
 		TCHAR szDeletePenResult[] = TEXT("DeletePenResult: %s");
@@ -437,7 +437,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 	return 0;
 }
 
-TCHAR BoolToChar(BOOL bBool) {
+TCHAR BoolToChar(bool bBool) {
 	return bBool ? 't' : 'f';
 }
 
