@@ -6,6 +6,8 @@
 #include "resource.h"
 
 HINSTANCE g_hInstance;
+HWND g_hMainWnd;
+
 TCHAR g_str[100];
 UINT g_strIndex = 0;
 POINT g_movableTextPosition = { 10, 150 };
@@ -17,11 +19,14 @@ UINT g_nTimerCount2 = 0;
 
 UINT g_nDialogX = 0;
 UINT g_nDialogY = 0;
-TCHAR g_szDialogStr[100] = {0, };
+TCHAR g_szDialogStr[100] = { 0, };
+
+HWND g_hModelessDialog;
 
 TCHAR BoolToChar(BOOL bBool);
 VOID CALLBACK TimerProc(HWND hWnd, UINT message, UINT_PTR id, DWORD time);
 INT_PTR CALLBACK DialogProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK DialogProc_Modeless(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
@@ -130,6 +135,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		hInstance, // HINSTANCE hInstance : 응용 프로그램 인스턴스
 		nullptr // LPVOID lpParam : 생성 윈도우 정보, 여유분으로 사용하지 않는다.
 	);
+	g_hMainWnd = hWnd;
 
 
 	// 4. 윈도우 출력
@@ -392,12 +398,28 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 	}
 	break;
 	case WM_RBUTTONDOWN:
-		hdc = GetDC(hWnd);
-		TextOut(hdc, 100, 100, TEXT("Release"), _tcslen(TEXT("Release")));
-		ReleaseDC(hWnd, hdc);
+		//hdc = GetDC(hWnd);
+		//TextOut(hdc, 100, 100, TEXT("Release"), _tcslen(TEXT("Release")));
+		//ReleaseDC(hWnd, hdc);
+
+		// 모델리스 다이얼로그 생성
+		// IsWindow() 함수로 현재 유효한 윈도우 핸들인지 확인한다.
+		if (IsWindow(g_hModelessDialog) == FALSE) {
+			// CreateDialog()는 생성한 다이얼로그의 핸들을 바로 반환한다.
+			g_hModelessDialog = CreateDialog(g_hInstance, MAKEINTRESOURCE(IDD_DIALOG2), hWnd, DialogProc_Modeless);
+
+			// 다이얼로그를 생성했지만 아직 보이지 않기 때문에 화면에 보이도록 한다.
+			// 디얼로그에 WS_VISIBLE 스타일을 주었다면 
+			// ShowWindow() 함수를 호출하지 않아도 되지만
+			// 디폴트가 WS_VISIBLE 스타일이 아니므로 호출한다.
+			ShowWindow(g_hModelessDialog, SW_SHOW);
+		}
 		break;
 	case WM_MBUTTONDOWN:
 	{
+		// 모달 다이얼로그 박스 생성
+		// DialogBox의 반환값을 보고 성공/취소를 판단하여 처리한다.
+		// 반환값을 EndDialog의 두번째 파라미터로 넘기는 값이 반환된다.
 		if (DialogBox(g_hInstance, MAKEINTRESOURCE(IDD_DIALOG1), hWnd, DialogProc) != 0) {
 			InvalidateRect(hWnd, NULL, TRUE);
 		};
@@ -423,7 +445,44 @@ VOID CALLBACK TimerProc(HWND hWnd, UINT message, UINT_PTR id, DWORD time) {
 	g_nTimerCount2++;
 }
 
+// 모달 다이얼로그 프로시저
 INT_PTR CALLBACK DialogProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	switch (message)
+	{
+	case WM_INITDIALOG:
+		// 다이얼로그 초기화 시 각 컨트롤러에 초기값을 넣어준다.
+		SetDlgItemInt(hWnd, IDC_X, g_nDialogX, FALSE);
+		SetDlgItemInt(hWnd, IDC_Y, g_nDialogY, FALSE);
+		SetDlgItemText(hWnd, IDC_STR, g_szDialogStr);
+		return true;
+
+	case WM_COMMAND:
+		switch (wParam)
+		{
+		case IDOK:
+			// 작업이 끝나고 다이얼로그창을 성공적으로 닫을 때 컨트롤러에 있는 값을 넣어준다.
+			g_nDialogX = GetDlgItemInt(hWnd, IDC_X, NULL, FALSE);
+			g_nDialogY = GetDlgItemInt(hWnd, IDC_Y, NULL, FALSE);
+			GetDlgItemText(hWnd, IDC_STR, g_szDialogStr, 100);
+			EndDialog(hWnd, 1); // DialogBox()의 리턴값이 1이 된다.
+			break;
+		case IDCANCEL:
+			// 다이얼로그 작업을 취소할 경우 그대로 나간다.
+			EndDialog(hWnd, FALSE); // DialogBox()의 리턴값이 0이 된다.
+			return TRUE;
+		default:
+			break;
+		}
+	default:
+		return FALSE;
+		break;
+	}
+	return FALSE;
+}
+
+// 모델리스 다이얼로그 프로시저
+INT_PTR CALLBACK DialogProc_Modeless(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	switch (message)
 	{
@@ -436,14 +495,15 @@ INT_PTR CALLBACK DialogProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 	case WM_COMMAND:
 		switch (wParam)
 		{
-		case IDOK:
+		case ID_CHANGE:
 			g_nDialogX = GetDlgItemInt(hWnd, IDC_X, NULL, FALSE);
 			g_nDialogY = GetDlgItemInt(hWnd, IDC_Y, NULL, FALSE);
 			GetDlgItemText(hWnd, IDC_STR, g_szDialogStr, 100);
-			EndDialog(hWnd, 1);
+			InvalidateRect(g_hMainWnd, NULL, TRUE); // 데이터 변경을 메인윈도우의 화면에 반영
 			break;
-		case IDCANCEL:
-			EndDialog(hWnd, FALSE);
+		case ID_CLOSE:
+			DestroyWindow(g_hModelessDialog); // CreateDialog()로 열었으므로 DestroyWindow()로 닫는다.
+			//EndDialog(hWnd, FALSE); // 닫히긴하지만 다시 열리지 않는다.
 			return TRUE;
 		default:
 			break;
