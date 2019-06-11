@@ -1,9 +1,22 @@
 #include <Windows.h>
 #include <tchar.h>
 #include <stdio.h>
+//#include <iostream>
+#include <string>
 #include "resource.h"
 
 HINSTANCE g_hInstance;
+TCHAR g_str[100];
+UINT g_strIndex = 0;
+POINT g_movableTextPosition = { 10, 150 };
+BOOL g_bF1KeyDown = FALSE;
+BOOL g_bDragging = false;
+POINT g_dragStartPosition = { 0, 0 };
+UINT g_nTimerCount1 = 0;
+UINT g_nTimerCount2 = 0;
+
+TCHAR BoolToChar(BOOL bBool);
+VOID CALLBACK TimerProc(HWND hWnd, UINT message, UINT_PTR id, DWORD time);
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
@@ -143,7 +156,27 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 	switch (message)
 	{
 	case WM_CREATE: // 윈도우가 처음 생성됐을 때 발생
+		SetTimer(hWnd, 1, 1000, NULL);
+		SetTimer(hWnd, 2, 2000, TimerProc);
 		break;
+	case WM_TIMER:
+	{
+		switch (wParam)
+		{
+		case 1:
+			g_nTimerCount1++;
+			break;
+
+		/*case 2:
+			g_nTimerCount2++;
+			break;*/
+
+		default:
+			break;
+		}
+		InvalidateRect(hWnd, NULL, false);
+	}
+	break;
 	case WM_COMMAND:
 	{
 		WORD menuId = LOWORD(wParam);
@@ -171,6 +204,35 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 		hCursor = LoadCursor(g_hInstance, MAKEINTRESOURCE(IDC_CURSOR1));
 		SetCursor(hCursor);
 		break;
+	case WM_CHAR:
+	{
+		g_str[g_strIndex++] = wParam;
+		InvalidateRect(NULL, NULL, TRUE);
+	}
+	break;
+	case WM_KEYDOWN:
+	{
+		switch (wParam)
+		{
+		case VK_LEFT:
+			g_movableTextPosition.x -= 1;
+			break;
+		case VK_RIGHT:
+			g_movableTextPosition.x += 1;
+			break;
+		case VK_UP:
+			g_movableTextPosition.y -= 1;
+			break;
+		case VK_DOWN:
+			g_movableTextPosition.y += 1;
+			break;
+		default:
+			break;
+		}
+
+		InvalidateRect(hWnd, NULL, TRUE);
+	}
+	break;
 	case WM_PAINT:
 	{
 		hdc = BeginPaint(hWnd, &ps);
@@ -182,6 +244,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 		SetBkColor(hdc, RGB(0, 255, 255));
 
 		TextOut(hdc, 10, 10, TEXT("hihi"), _tcslen(TEXT("hihi")));
+		TextOut(hdc, 10, 100, g_str, _tcslen(g_str));
+		TextOut(hdc, g_movableTextPosition.x, g_movableTextPosition.y, TEXT("KeyDown"), _tcslen(TEXT("KeyDown")));
+		TextOut(hdc, 10, 200, g_bF1KeyDown ? "t" : "f", _tcslen(TEXT("a")));
+		TextOut(hdc, 10, 250, std::to_string(g_nTimerCount1).c_str(), 10);
+		TextOut(hdc, 10, 260, std::to_string(g_nTimerCount2).c_str(), 10);
 
 		SetPixel(hdc, 150, 150, RGB(255, 0, 0));
 		SetPixel(hdc, 151, 150, RGB(0, 255, 0));
@@ -258,7 +325,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 		// ========== Bitmap ========== end
 
 
-
 		EndPaint(hWnd, &ps);
 
 		hdc = GetDC(hWnd);
@@ -275,8 +341,45 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 		SetPixel(hdc, rand() % 300, rand() % 300, RGB(255, 0, 0));
 		InvalidateRect(hWnd, &rect, TRUE);
 		//ReleaseDC(hWnd, hdc);
-	}
 
+		if (GetAsyncKeyState(VK_F1) & 0x8000) {
+			g_bF1KeyDown = TRUE;
+		}
+		else {
+			g_bF1KeyDown = FALSE;
+		}
+
+		WORD x = LOWORD(lParam);
+		WORD y = HIWORD(lParam);
+		g_dragStartPosition = { x, y };
+		g_bDragging = TRUE;
+	}
+	break;
+	case WM_LBUTTONUP:
+	{
+		g_bDragging = false;
+	}
+	break;
+	case WM_MOUSEMOVE:
+	{
+		// 드래그하여 사각형 그리기 방법 1.
+		if (g_bDragging) {
+			WORD x = LOWORD(lParam);
+			WORD y = HIWORD(lParam);
+			HDC hdc = GetDC(hWnd);
+			Rectangle(hdc, g_dragStartPosition.x, g_dragStartPosition.y, x, y);
+			ReleaseDC(hWnd, hdc);
+		}
+
+		// 드래그하여 사각형 그리기 방법 2.
+		if (wParam == MK_LBUTTON) {
+			WORD x = LOWORD(lParam);
+			WORD y = HIWORD(lParam);
+			HDC hdc = GetDC(hWnd);
+			Rectangle(hdc, g_dragStartPosition.x, g_dragStartPosition.y, x, y);
+			ReleaseDC(hWnd, hdc);
+		}
+	}
 	break;
 	case WM_RBUTTONDOWN:
 		hdc = GetDC(hWnd);
@@ -284,6 +387,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 		ReleaseDC(hWnd, hdc);
 		break;
 	case WM_DESTROY:
+		KillTimer(hWnd, 1);
+		KillTimer(hWnd, 2);
 		PostQuitMessage(0); // GetMessage() 함수가 0을 반환하게 된다.
 		break;
 	default:
@@ -291,4 +396,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 	}
 
 	return 0;
+}
+
+TCHAR BoolToChar(BOOL bBool) {
+	return bBool ? 't' : 'f';
+}
+
+VOID CALLBACK TimerProc(HWND hWnd, UINT message, UINT_PTR id, DWORD time) {
+	g_nTimerCount2++;
 }
