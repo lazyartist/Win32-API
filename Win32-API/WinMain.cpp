@@ -15,8 +15,13 @@ POINT g_dragStartPosition = { 0, 0 };
 UINT g_nTimerCount1 = 0;
 UINT g_nTimerCount2 = 0;
 
+UINT g_nDialogX = 0;
+UINT g_nDialogY = 0;
+TCHAR g_szDialogStr[100] = {0, };
+
 TCHAR BoolToChar(BOOL bBool);
 VOID CALLBACK TimerProc(HWND hWnd, UINT message, UINT_PTR id, DWORD time);
+INT_PTR CALLBACK DialogProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
@@ -158,6 +163,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 	case WM_CREATE: // 윈도우가 처음 생성됐을 때 발생
 		SetTimer(hWnd, 1, 1000, NULL);
 		SetTimer(hWnd, 2, 2000, TimerProc);
+
+		g_nDialogX = 10;
+		g_nDialogY = 300;
+		_stprintf_s(g_szDialogStr, TEXT("Dialog"));
 		break;
 	case WM_TIMER:
 	{
@@ -167,9 +176,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 			g_nTimerCount1++;
 			break;
 
-		/*case 2:
-			g_nTimerCount2++;
-			break;*/
+			/*case 2:
+				g_nTimerCount2++;
+				break;*/
 
 		default:
 			break;
@@ -249,6 +258,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 		TextOut(hdc, 10, 200, g_bF1KeyDown ? "t" : "f", _tcslen(TEXT("a")));
 		TextOut(hdc, 10, 250, std::to_string(g_nTimerCount1).c_str(), 10);
 		TextOut(hdc, 10, 260, std::to_string(g_nTimerCount2).c_str(), 10);
+		TextOut(hdc, g_nDialogX, g_nDialogY, g_szDialogStr, _tcslen(g_szDialogStr));
 
 		SetPixel(hdc, 150, 150, RGB(255, 0, 0));
 		SetPixel(hdc, 151, 150, RGB(0, 255, 0));
@@ -386,6 +396,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 		TextOut(hdc, 100, 100, TEXT("Release"), _tcslen(TEXT("Release")));
 		ReleaseDC(hWnd, hdc);
 		break;
+	case WM_MBUTTONDOWN:
+	{
+		if (DialogBox(g_hInstance, MAKEINTRESOURCE(IDD_DIALOG1), hWnd, DialogProc) != 0) {
+			InvalidateRect(hWnd, NULL, TRUE);
+		};
+	}
+	break;
 	case WM_DESTROY:
 		KillTimer(hWnd, 1);
 		KillTimer(hWnd, 2);
@@ -404,4 +421,36 @@ TCHAR BoolToChar(BOOL bBool) {
 
 VOID CALLBACK TimerProc(HWND hWnd, UINT message, UINT_PTR id, DWORD time) {
 	g_nTimerCount2++;
+}
+
+INT_PTR CALLBACK DialogProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	switch (message)
+	{
+	case WM_INITDIALOG:
+		SetDlgItemInt(hWnd, IDC_X, g_nDialogX, FALSE);
+		SetDlgItemInt(hWnd, IDC_Y, g_nDialogY, FALSE);
+		SetDlgItemText(hWnd, IDC_STR, g_szDialogStr);
+		return true;
+
+	case WM_COMMAND:
+		switch (wParam)
+		{
+		case IDOK:
+			g_nDialogX = GetDlgItemInt(hWnd, IDC_X, NULL, FALSE);
+			g_nDialogY = GetDlgItemInt(hWnd, IDC_Y, NULL, FALSE);
+			GetDlgItemText(hWnd, IDC_STR, g_szDialogStr, 100);
+			EndDialog(hWnd, 1);
+			break;
+		case IDCANCEL:
+			EndDialog(hWnd, FALSE);
+			return TRUE;
+		default:
+			break;
+		}
+	default:
+		return FALSE;
+		break;
+	}
+	return FALSE;
 }
