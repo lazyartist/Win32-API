@@ -23,7 +23,7 @@
     <ProjectGuid>{9A1FE274-0805-4C44-8C36-30C93E27A336}</ProjectGuid>
     <RootNamespace>TestCpp</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
-    <ProjectName>Win32-API</ProjectName>
+    <ProjectName>01-Basic</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -132,10 +132,9 @@
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Win32-API.rc" />
+    <ResourceCompile Include="01-Basic.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\Test-Win32-API-Template\bitmap1.bmp" />
     <Image Include="icon1.ico" />
     <Image Include="icon2.ico" />
   </ItemGroup>

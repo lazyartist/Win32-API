@@ -26,8 +26,8 @@ INT_PTR CALLBACK DialogProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 	case WM_COMMAND:
 		switch (wParam)
 		{
-		case IDOK:
-		case IDCANCEL:
+		case ID_OK:
+		case ID_CANCEL:
 			EndDialog(hWnd, 0);
 			break;
 		case IDC_OPEN:

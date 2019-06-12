@@ -3,11 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.572
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Test-Win32-API-Template", "Test-Win32-API-Template\Test-Win32-API-Template.vcxproj", "{C96E7AF2-DB91-4277-AD1E-E23C0E4F36E4}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "00-AutoCode", "00-AutoCode\00-AutoCode.vcxproj", "{C96E7AF2-DB91-4277-AD1E-E23C0E4F36E4}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Win32-API", "Win32-API\Win32-API.vcxproj", "{9A1FE274-0805-4C44-8C36-30C93E27A336}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "01-Basic", "01-Basic\01-Basic.vcxproj", "{9A1FE274-0805-4C44-8C36-30C93E27A336}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Win32-API-FormBasedWindow", "Win32-API-FormBasedWindow\Win32-API-FormBasedWindow.vcxproj", "{AC723874-DA40-424E-91AB-86C7612C33BE}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "02-FormBasedWindow", "02-FormBasedWindow\02-FormBasedWindow.vcxproj", "{AC723874-DA40-424E-91AB-86C7612C33BE}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "03-FileOpen", "03-FileOpen\03-FileOpen.vcxproj", "{07D7B3E8-8133-4F0E-8F43-41B2C85587D8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +43,14 @@ Global
 		{AC723874-DA40-424E-91AB-86C7612C33BE}.Release|x64.Build.0 = Release|x64
 		{AC723874-DA40-424E-91AB-86C7612C33BE}.Release|x86.ActiveCfg = Release|Win32
 		{AC723874-DA40-424E-91AB-86C7612C33BE}.Release|x86.Build.0 = Release|Win32
+		{07D7B3E8-8133-4F0E-8F43-41B2C85587D8}.Debug|x64.ActiveCfg = Debug|x64
+		{07D7B3E8-8133-4F0E-8F43-41B2C85587D8}.Debug|x64.Build.0 = Debug|x64
+		{07D7B3E8-8133-4F0E-8F43-41B2C85587D8}.Debug|x86.ActiveCfg = Debug|Win32
+		{07D7B3E8-8133-4F0E-8F43-41B2C85587D8}.Debug|x86.Build.0 = Debug|Win32
+		{07D7B3E8-8133-4F0E-8F43-41B2C85587D8}.Release|x64.ActiveCfg = Release|x64
+		{07D7B3E8-8133-4F0E-8F43-41B2C85587D8}.Release|x64.Build.0 = Release|x64
+		{07D7B3E8-8133-4F0E-8F43-41B2C85587D8}.Release|x86.ActiveCfg = Release|Win32
+		{07D7B3E8-8133-4F0E-8F43-41B2C85587D8}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
