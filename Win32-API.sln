@@ -13,6 +13,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "03-FileOpen", "03-FileOpen\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "04-ImageViewer", "04-ImageViewer\04-ImageViewer.vcxproj", "{AB235B5D-87D8-42EB-877C-26529DDCF459}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "0501-Controll", "0501-Controll\0501-Controll.vcxproj", "{DF0FA0F4-8CEA-42CA-87F6-D6791FBAB52A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -61,6 +63,14 @@ Global
 		{AB235B5D-87D8-42EB-877C-26529DDCF459}.Release|x64.Build.0 = Release|x64
 		{AB235B5D-87D8-42EB-877C-26529DDCF459}.Release|x86.ActiveCfg = Release|Win32
 		{AB235B5D-87D8-42EB-877C-26529DDCF459}.Release|x86.Build.0 = Release|Win32
+		{DF0FA0F4-8CEA-42CA-87F6-D6791FBAB52A}.Debug|x64.ActiveCfg = Debug|x64
+		{DF0FA0F4-8CEA-42CA-87F6-D6791FBAB52A}.Debug|x64.Build.0 = Debug|x64
+		{DF0FA0F4-8CEA-42CA-87F6-D6791FBAB52A}.Debug|x86.ActiveCfg = Debug|Win32
+		{DF0FA0F4-8CEA-42CA-87F6-D6791FBAB52A}.Debug|x86.Build.0 = Debug|Win32
+		{DF0FA0F4-8CEA-42CA-87F6-D6791FBAB52A}.Release|x64.ActiveCfg = Release|x64
+		{DF0FA0F4-8CEA-42CA-87F6-D6791FBAB52A}.Release|x64.Build.0 = Release|x64
+		{DF0FA0F4-8CEA-42CA-87F6-D6791FBAB52A}.Release|x86.ActiveCfg = Release|Win32
+		{DF0FA0F4-8CEA-42CA-87F6-D6791FBAB52A}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
