@@ -23,6 +23,7 @@
     <ProjectGuid>{DF0FA0F4-8CEA-42CA-87F6-D6791FBAB52A}</ProjectGuid>
     <RootNamespace>My0501Controll</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <ProjectName>0501-Control</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

@@ -85,10 +85,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 
 			// MDI에서 사용하는 구조체
 			nullptr);
-
+		// Button 컨트롤 생성 end
 
 		// Static 컨트롤 생성
 		HWND hStatkc = CreateWindowEx(0, "static", "static controll text", WS_CHILD | WS_VISIBLE, 20, 50, 200, 50, hWnd, (HMENU)20, g_hInst, nullptr);
+		// Static 컨트롤 생성 end
 	}
 
 	break;
@@ -121,5 +122,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 		break;
 	}
 
-	return 0; // 0을 리턴하면 프로그램이 종료된다.
+	// false(0)을 리턴하면 메시지를 제대로 처리하지 않았음을 나타낸다.
+	// 윈도우 생성중(CreateWindow()함수 내부)에 false를 리턴하면 윈도우가 생성되지 않기 때문에 
+	// 처리하는 메시지가 없어도 DefWindowProc를 통해 0이 아닌 값을 리턴하도록 해야한다.
+	// 윈도우 생성 후에는 메시지가 제대로 처리되지 않았음을 나타낼뿐 프로그램이 종료되지는 않는다.
+	return 0; 
 }
