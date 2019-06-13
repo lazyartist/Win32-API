@@ -452,6 +452,7 @@ INT_PTR CALLBACK DialogProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 	{
 	case WM_INITDIALOG:
 		// 다이얼로그 초기화 시 각 컨트롤러에 초기값을 넣어준다.
+		// IDC_X, IDC_Y, IDC_STR는 Edit 컨트롤
 		SetDlgItemInt(hWnd, IDC_X, g_nDialogX, FALSE);
 		SetDlgItemInt(hWnd, IDC_Y, g_nDialogY, FALSE);
 		SetDlgItemText(hWnd, IDC_STR, g_szDialogStr);
