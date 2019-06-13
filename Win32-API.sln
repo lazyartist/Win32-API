@@ -11,6 +11,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "02-FormBasedWindow", "02-Fo
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "03-FileOpen", "03-FileOpen\03-FileOpen.vcxproj", "{07D7B3E8-8133-4F0E-8F43-41B2C85587D8}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "04-ImageViewer", "04-ImageViewer\04-ImageViewer.vcxproj", "{AB235B5D-87D8-42EB-877C-26529DDCF459}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -51,6 +53,14 @@ Global
 		{07D7B3E8-8133-4F0E-8F43-41B2C85587D8}.Release|x64.Build.0 = Release|x64
 		{07D7B3E8-8133-4F0E-8F43-41B2C85587D8}.Release|x86.ActiveCfg = Release|Win32
 		{07D7B3E8-8133-4F0E-8F43-41B2C85587D8}.Release|x86.Build.0 = Release|Win32
+		{AB235B5D-87D8-42EB-877C-26529DDCF459}.Debug|x64.ActiveCfg = Debug|x64
+		{AB235B5D-87D8-42EB-877C-26529DDCF459}.Debug|x64.Build.0 = Debug|x64
+		{AB235B5D-87D8-42EB-877C-26529DDCF459}.Debug|x86.ActiveCfg = Debug|Win32
+		{AB235B5D-87D8-42EB-877C-26529DDCF459}.Debug|x86.Build.0 = Debug|Win32
+		{AB235B5D-87D8-42EB-877C-26529DDCF459}.Release|x64.ActiveCfg = Release|x64
+		{AB235B5D-87D8-42EB-877C-26529DDCF459}.Release|x64.Build.0 = Release|x64
+		{AB235B5D-87D8-42EB-877C-26529DDCF459}.Release|x86.ActiveCfg = Release|Win32
+		{AB235B5D-87D8-42EB-877C-26529DDCF459}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
