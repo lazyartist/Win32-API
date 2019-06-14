@@ -25,7 +25,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="03-WinMain.cpp">
+    <ClCompile Include="03-FileOpen.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

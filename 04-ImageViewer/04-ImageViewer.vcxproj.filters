@@ -25,7 +25,7 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="04-WinMain.cpp">
+    <ClCompile Include="04-ImageViewer.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

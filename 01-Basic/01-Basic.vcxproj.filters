@@ -41,7 +41,7 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="01-WinMain.cpp">
+    <ClCompile Include="01-Basic.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

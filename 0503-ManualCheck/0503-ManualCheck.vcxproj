@@ -115,7 +115,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="0503-ManualCheck-WM.cpp" />
+    <ClCompile Include="0503-ManualCheck.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />

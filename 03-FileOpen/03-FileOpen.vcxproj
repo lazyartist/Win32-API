@@ -22,7 +22,7 @@
     <ResourceCompile Include="03-FileOpen.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="03-WinMain.cpp" />
+    <ClCompile Include="03-FileOpen.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
