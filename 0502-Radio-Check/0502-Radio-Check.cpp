@@ -19,7 +19,7 @@ void PrintRadioState(HWND hWnd); // 라디오 버튼의 상태를 출력
 void ClearCheck(HWND hWnd); // 모든 체크 버튼의 선택 해제
 void ClearRadio(HWND hWnd); // 모든 라디오 버튼의 선택 해제
 
-INT_PTR APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
 	DialogBox(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), nullptr, DialogProc);
 
 	return 0;
