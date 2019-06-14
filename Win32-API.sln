@@ -17,6 +17,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "0501-Control", "0501-Contro
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "0502-Radio-Check", "0502-Radio-Check\0502-Radio-Check.vcxproj", "{7E54D877-3D2D-4CC3-B8B8-DD5E7B0DEE4F}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "0503-ManualCheck", "0503-ManualCheck\0503-ManualCheck.vcxproj", "{6319D057-52D1-46A2-872F-7AAA07331B05}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -81,6 +83,14 @@ Global
 		{7E54D877-3D2D-4CC3-B8B8-DD5E7B0DEE4F}.Release|x64.Build.0 = Release|x64
 		{7E54D877-3D2D-4CC3-B8B8-DD5E7B0DEE4F}.Release|x86.ActiveCfg = Release|Win32
 		{7E54D877-3D2D-4CC3-B8B8-DD5E7B0DEE4F}.Release|x86.Build.0 = Release|Win32
+		{6319D057-52D1-46A2-872F-7AAA07331B05}.Debug|x64.ActiveCfg = Debug|x64
+		{6319D057-52D1-46A2-872F-7AAA07331B05}.Debug|x64.Build.0 = Debug|x64
+		{6319D057-52D1-46A2-872F-7AAA07331B05}.Debug|x86.ActiveCfg = Debug|Win32
+		{6319D057-52D1-46A2-872F-7AAA07331B05}.Debug|x86.Build.0 = Debug|Win32
+		{6319D057-52D1-46A2-872F-7AAA07331B05}.Release|x64.ActiveCfg = Release|x64
+		{6319D057-52D1-46A2-872F-7AAA07331B05}.Release|x64.Build.0 = Release|x64
+		{6319D057-52D1-46A2-872F-7AAA07331B05}.Release|x86.ActiveCfg = Release|Win32
+		{6319D057-52D1-46A2-872F-7AAA07331B05}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
