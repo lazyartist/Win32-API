@@ -2,13 +2,24 @@
 #include "resource.h"
 #include "common.h"
 #include "File.h"
-//#include <vector>
+#include <vector>
+#include "Commctrl.h"
+#include "StudentList.h"
 
 HINSTANCE g_hInstance;
+char g_strLoginId[Max_Account_Text];
+
+StudentList g_studentList;
+UINT g_nSelectedStudentIndex = -1;
 
 INT_PTR CALLBACK LoginDlgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 INT_PTR CALLBACK LoginInfoChangeDlgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 INT_PTR CALLBACK MainDlgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
+void SetLoginInfo(HWND hWnd);
+
+void UpdateStudentsListView(HWND hWnd);
+void UpdateDeleteButtonState(HWND hWnd, bool bEnable);
 
 void SetWindowPositionToCenter(HWND hWnd);
 
@@ -38,57 +49,71 @@ INT_PTR CALLBACK MainDlgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 	{
 	case WM_INITDIALOG:
 	{
+		SetLoginInfo(hWnd);
+		UpdateDeleteButtonState(hWnd, g_nSelectedStudentIndex != -1);
+
+
 		// 스크린 가운데 출력
 		SetWindowPositionToCenter(hWnd);
 
-		// 학생정보 읽기
-		FILE *file;
-		fopen_s(&file, "students.txt", "rt");
-		char studentsFileInfo[Max_Student_File_Info] = {};
-		fgets(studentsFileInfo, Max_Student_Info_Line, file);
-		int studentsCount = atoi(studentsFileInfo);
+		// 학생리스트 설정
+		// 컬럼 추가
+		HWND hListView = GetDlgItem(hWnd, IDC_LIST1);
+		char colText0[] = "학번";
+		char colText1[] = "이름";
+		LVCOLUMN col = {};
+		col.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
+		col.fmt = LVCFMT_LEFT;
+		col.cx = 100;
+		col.pszText = colText0;
+		ListView_InsertColumn(hListView, 0, &col); // 컬럼 추가0
+		col.pszText = colText1;
+		ListView_InsertColumn(hListView, 1, &col); // 컬럼 추가1
 
-		char studentInfoLine[Max_Student_Info_Line] = {};
-		char id[Max_Student_Id];
-		char name[Max_Student_Name];
-		char *token;
-		char *nextToken;
+		// 리스트 아이템 전체가 선택되도록 설정
+		ListView_SetExtendedListViewStyle(
+			GetDlgItem(hWnd, IDC_LIST1),
+			LVS_EX_FULLROWSELECT // 아이템 전체가 클릭되도록 한다.
+			| LVS_EX_GRIDLINES // 서브아이템 사이에 그리드 라인을 넣는다.
+		);
 
-		vector<Student> students;
-		students.reserve(studentsCount); // 메모리 미리 할당
+		// 파일에서 학생정보 읽기
+		g_studentList.LoadStudents("students.txt");
 
-		for (size_t i = 0; i < studentsCount; i++)
+		UpdateStudentsListView(hWnd);
+	}
+	break;
+
+	case WM_NOTIFY:
+	{
+		switch (wParam)
 		{
-			fgets(studentInfoLine, Max_Student_Info_Line, file);
-
-			token = strtok_s(studentInfoLine, "\t", &nextToken);
-			strcpy_s(id, token);
-			token = strtok_s(NULL, "\t", &nextToken);
-			strcpy_s(name, token);
-
-			// \n을 제거
-			id[strcspn(id, "\n")] = 0;
-			name[strcspn(name, "\n")] = 0;
-
-			Student student = {};
-			strcpy_s(student.Id, id);
-			strcpy_s(student.Name, name);
-
-			students.push_back(student);
-		}
-
-		vector<Student>::iterator it = students.begin();
-		while (it != students.end())
+		case IDC_LIST1:
 		{
-			log(it->Id);
-			log(it->Name);
-			++it;
+			NMTTDISPINFO *nmttdispinfo = (NMTTDISPINFO*)lParam;
+			if (nmttdispinfo->hdr.code == LVN_ITEMCHANGED) {
+				g_nSelectedStudentIndex = ListView_GetNextItem(
+					nmttdispinfo->hdr.hwndFrom, // 윈도우 핸들
+					-1, // 검색을 시작할 인덱스
+					LVNI_SELECTED // 검색 조건
+				);
+				if (g_nSelectedStudentIndex == -1) {
+					// 
+				}
+				else {
+					char id[Max_Account_Text];
+					ListView_GetItemText(nmttdispinfo->hdr.hwndFrom, g_nSelectedStudentIndex, 0, id, Max_Account_Text);
+					log(id);
+				}
 
-			log("---");
+				UpdateDeleteButtonState(hWnd, g_nSelectedStudentIndex != -1);
+			}
 		}
+		break;
 
-		// 학생정보 출력
-
+		default:
+			break;
+		}
 	}
 	break;
 
@@ -125,6 +150,46 @@ INT_PTR CALLBACK MainDlgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 		case IDC_BUTTON1: // 로그인 정보 변경 버튼
 		{
 			DialogBox(g_hInstance, MAKEINTRESOURCE(IDD_DIALOG3), hWnd, LoginInfoChangeDlgProc);
+		}
+		break;
+
+		case IDC_BUTTON2: // 학생 삭제 버튼
+		{
+			g_studentList.RemoveStudent(g_nSelectedStudentIndex);
+
+			g_nSelectedStudentIndex = -1;
+			UpdateStudentsListView(hWnd);
+			UpdateDeleteButtonState(hWnd, g_nSelectedStudentIndex != -1);
+		}
+		break;
+
+		case IDC_BUTTON4: // 학생 파일저장 버튼
+		{
+			g_studentList.SaveStudents();
+		}
+		break;
+
+		case IDC_BUTTON3: // 학생 추가 버튼
+		{
+			LRESULT rId = SendMessage(GetDlgItem(hWnd, IDC_EDIT1), WM_GETTEXTLENGTH, 0, 0);
+			LRESULT rName = SendMessage(GetDlgItem(hWnd, IDC_EDIT2), WM_GETTEXTLENGTH, 0, 0);
+
+			if (rId == 0 || rName == 0) {
+				MessageBox(hWnd, "input id or name", "input", MB_OK);
+			}
+			else {
+				char id[Max_Account_Text];
+				char name[Max_Account_Text];
+				GetDlgItemText(hWnd, IDC_EDIT1, id, Max_Account_Text);
+				GetDlgItemText(hWnd, IDC_EDIT2, name, Max_Account_Text);
+				g_studentList.AddStudent(id, name);
+
+				UpdateStudentsListView(hWnd);
+
+				SetDlgItemText(hWnd, IDC_EDIT1, "");
+				SetDlgItemText(hWnd, IDC_EDIT2, "");
+			}
+			
 		}
 		break;
 
@@ -181,6 +246,7 @@ INT_PTR CALLBACK LoginDlgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			LoginResultType loginResult = LoginResultType::Fail;
 			if (resId == 0 && resPw == 0) {
 				// 파일에 저장된 Id, Pw와 입력한 Id, Pw가 같으므로 로그인 성공
+				strcpy_s(g_strLoginId, id);
 				loginResult = LoginResultType::Success;
 				EndDialog(hWnd, (INT_PTR)loginResult);
 			}
@@ -289,4 +355,41 @@ void SetWindowPositionToCenter(HWND hWnd) {
 	UINT clientH = rectClient.bottom - rectClient.top;
 
 	MoveWindow(hWnd, (screenX / 2) - (clientW / 2), (screenY / 2) - (clientH / 2), clientW, clientH, false);
+}
+
+void SetLoginInfo(HWND hWnd) {
+	SetDlgItemText(hWnd, IDC_EDIT4, g_strLoginId);
+}
+
+void UpdateStudentsListView(HWND hWnd)
+{
+	HWND hListView = GetDlgItem(hWnd, IDC_LIST1);
+
+	ListView_DeleteAllItems(hListView);
+
+	// 아이템 추가
+	LVITEM item = {};
+	item.mask = LVIF_TEXT;
+	item.iSubItem = 0; // 아이템을 처음 추가하므로 0번째 서브아이템을 선택한다.
+	item.state;
+	item.stateMask;
+	int itemCount = 0;
+
+	auto students = g_studentList.GetStudents();
+	vector<Student>::iterator it = students->begin();
+	while (it != students->end())
+	{
+		itemCount = ListView_GetItemCount(hListView);
+
+		item.iItem = itemCount;
+		item.pszText = it->Id;
+		ListView_InsertItem(hListView, &item); // 아이템 추가0
+		ListView_SetItemText(hListView, itemCount/*item idx*/, 1/*subitem idx*/, it->Name); // 서브아이템 추가0
+
+		++it;
+	}
+}
+
+void UpdateDeleteButtonState(HWND hWnd, bool bEnable) {
+	EnableWindow(GetDlgItem(hWnd, IDC_BUTTON2), bEnable);
 }

@@ -118,12 +118,14 @@
   <ItemGroup>
     <ClCompile Include="0700-GradeManagement.cpp" />
     <ClCompile Include="File.cpp" />
+    <ClCompile Include="StudentList.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="common.h" />
     <ClInclude Include="File.h" />
     <ClInclude Include="LoginManager.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="StudentList.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="0700-GradeManagement.rc" />

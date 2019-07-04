@@ -1,7 +1,8 @@
 #pragma once
 
+#include <iostream> // sprintf_s()
 #include "Windows.h"
-#include <vector>
+//#include <vector>
 
 using namespace std;
 
@@ -36,6 +37,13 @@ typedef struct _Student {
 // ===== function =====
 inline void log(LPCSTR lpStr) {
 	OutputDebugString(lpStr);
+	OutputDebugString("\n");
+};
+
+inline void log(int i) {
+	char buffer[99];
+	sprintf_s(buffer, 99, "%d", i);
+	OutputDebugString(buffer);
 	OutputDebugString("\n");
 };
 // ===== function ===== end
