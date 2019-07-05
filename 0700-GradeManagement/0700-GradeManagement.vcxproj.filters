@@ -24,12 +24,12 @@
     <ClCompile Include="StudentList.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="ScoreList.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="LoginManager.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="File.h">
@@ -39,6 +39,9 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="StudentList.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ScoreList.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

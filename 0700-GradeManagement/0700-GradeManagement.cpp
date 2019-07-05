@@ -5,21 +5,38 @@
 #include <vector>
 #include "Commctrl.h"
 #include "StudentList.h"
+#include "ScoreList.h"
 
 HINSTANCE g_hInstance;
+
 char g_strLoginId[Max_Account_Text];
 
+// 학생
 StudentList g_studentList;
 UINT g_nSelectedStudentIndex = -1;
+Student g_selectedStudent;
+// 학기
+UINT g_nSelectedSemesterIndex = -1;
+int g_semesterRadioIds[Max_Semester] = { IDC_RADIO1 , IDC_RADIO2 , IDC_RADIO3 , IDC_RADIO4 };
+// 점수
+UINT g_nSelectedScoreIndex = -1;
+ScoreList g_scoreList;
 
+// 윈도우 프로시저
 INT_PTR CALLBACK LoginDlgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 INT_PTR CALLBACK LoginInfoChangeDlgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 INT_PTR CALLBACK MainDlgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
-void SetLoginInfo(HWND hWnd);
-
+void UpdateLoginInfo(HWND hWnd);
 void UpdateStudentsListView(HWND hWnd);
-void UpdateDeleteButtonState(HWND hWnd, bool bEnable);
+void UpdateScoreListView(HWND hWnd);
+void UpdateSelectedStudentInfo(HWND hWnd);
+
+void UpdateStudentDeleteButtonState(HWND hWnd);
+void UpdateScoreDeleteButtonState(HWND hWnd);
+
+void SelectSemester(HWND hWnd, UINT index);
+int GetSemesterIndexById(UINT id);
 
 void SetWindowPositionToCenter(HWND hWnd);
 
@@ -27,8 +44,8 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 {
 	g_hInstance = hInstance;
 
-	//LoginResultType loginResult = (LoginResultType)DialogBox(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), nullptr, LoginDlgProc);
-	LoginResultType loginResult = LoginResultType::Success;
+	LoginResultType loginResult = (LoginResultType)DialogBox(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), nullptr, LoginDlgProc);
+	//LoginResultType loginResult = LoginResultType::Success;
 	if (loginResult == LoginResultType::Success) {
 		log("login success!!");
 
@@ -49,46 +66,74 @@ INT_PTR CALLBACK MainDlgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 	{
 	case WM_INITDIALOG:
 	{
-		SetLoginInfo(hWnd);
-		UpdateDeleteButtonState(hWnd, g_nSelectedStudentIndex != -1);
-
+		UpdateLoginInfo(hWnd);
+		UpdateStudentDeleteButtonState(hWnd);
 
 		// 스크린 가운데 출력
 		SetWindowPositionToCenter(hWnd);
 
 		// 학생리스트 설정
-		// 컬럼 추가
-		HWND hListView = GetDlgItem(hWnd, IDC_LIST1);
-		char colText0[] = "학번";
-		char colText1[] = "이름";
-		LVCOLUMN col = {};
-		col.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
-		col.fmt = LVCFMT_LEFT;
-		col.cx = 100;
-		col.pszText = colText0;
-		ListView_InsertColumn(hListView, 0, &col); // 컬럼 추가0
-		col.pszText = colText1;
-		ListView_InsertColumn(hListView, 1, &col); // 컬럼 추가1
+		{
+			// 컬럼 추가
+			HWND hListView = GetDlgItem(hWnd, IDC_LIST1);
+			char colText0[] = "학번";
+			char colText1[] = "이름";
+			LVCOLUMN col = {};
+			col.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
+			col.fmt = LVCFMT_LEFT;
+			col.cx = 60;
+			col.pszText = colText0;
+			ListView_InsertColumn(hListView, 0, &col); // 컬럼 추가0
+			col.pszText = colText1;
+			ListView_InsertColumn(hListView, 1, &col); // 컬럼 추가1
 
-		// 리스트 아이템 전체가 선택되도록 설정
-		ListView_SetExtendedListViewStyle(
-			GetDlgItem(hWnd, IDC_LIST1),
-			LVS_EX_FULLROWSELECT // 아이템 전체가 클릭되도록 한다.
-			| LVS_EX_GRIDLINES // 서브아이템 사이에 그리드 라인을 넣는다.
-		);
+			// 리스트 아이템 전체가 선택되도록 설정
+			ListView_SetExtendedListViewStyle(
+				GetDlgItem(hWnd, IDC_LIST1),
+				LVS_EX_FULLROWSELECT // 아이템 전체가 클릭되도록 한다.
+				| LVS_EX_GRIDLINES // 서브아이템 사이에 그리드 라인을 넣는다.
+			);
+		}
+
+
+		// 점수리스트 설정
+		{
+			// 컬럼 추가
+			HWND hListView = GetDlgItem(hWnd, IDC_LIST2);
+			char colText0[] = "과목";
+			char colText1[] = "점수";
+			LVCOLUMN col = {};
+			col.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
+			col.fmt = LVCFMT_LEFT;
+			col.cx = 60;
+			col.pszText = colText0;
+			ListView_InsertColumn(hListView, 0, &col); // 컬럼 추가0
+			col.pszText = colText1;
+			ListView_InsertColumn(hListView, 1, &col); // 컬럼 추가1
+
+			// 리스트 아이템 전체가 선택되도록 설정
+			ListView_SetExtendedListViewStyle(
+				GetDlgItem(hWnd, IDC_LIST2),
+				LVS_EX_FULLROWSELECT // 아이템 전체가 클릭되도록 한다.
+				| LVS_EX_GRIDLINES // 서브아이템 사이에 그리드 라인을 넣는다.
+			);
+		}
 
 		// 파일에서 학생정보 읽기
 		g_studentList.LoadStudents("students.txt");
-
 		UpdateStudentsListView(hWnd);
+		// 1학기 선택
+		SelectSemester(hWnd, 0);
+		// 점수 리스트 갱신
+		UpdateScoreListView(hWnd);
 	}
 	break;
 
-	case WM_NOTIFY:
+	case WM_NOTIFY: // 공통 컨트롤러의 메시지 통지
 	{
 		switch (wParam)
 		{
-		case IDC_LIST1:
+		case IDC_LIST1: // 학생 리스트
 		{
 			NMTTDISPINFO *nmttdispinfo = (NMTTDISPINFO*)lParam;
 			if (nmttdispinfo->hdr.code == LVN_ITEMCHANGED) {
@@ -101,12 +146,40 @@ INT_PTR CALLBACK MainDlgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 					// 
 				}
 				else {
-					char id[Max_Account_Text];
-					ListView_GetItemText(nmttdispinfo->hdr.hwndFrom, g_nSelectedStudentIndex, 0, id, Max_Account_Text);
-					log(id);
+					ListView_GetItemText(nmttdispinfo->hdr.hwndFrom, g_nSelectedStudentIndex, 0, g_selectedStudent.Id, Max_Student_Id);
+					ListView_GetItemText(nmttdispinfo->hdr.hwndFrom, g_nSelectedStudentIndex, 1, g_selectedStudent.Name, Max_Student_Name);
+					log(g_selectedStudent.Id, g_selectedStudent.Name);
 				}
 
-				UpdateDeleteButtonState(hWnd, g_nSelectedStudentIndex != -1);
+				UpdateSelectedStudentInfo(hWnd);
+				UpdateStudentDeleteButtonState(hWnd);
+
+				SelectSemester(hWnd, 0);
+
+				UpdateScoreListView(hWnd);
+			}
+		}
+		break;
+
+		case IDC_LIST2: // 성적 리스트
+		{
+			NMTTDISPINFO *nmttdispinfo = (NMTTDISPINFO*)lParam;
+			if (nmttdispinfo->hdr.code == LVN_ITEMCHANGED) {
+				g_nSelectedScoreIndex = ListView_GetNextItem(
+					nmttdispinfo->hdr.hwndFrom, // 윈도우 핸들
+					-1, // 검색을 시작할 인덱스
+					LVNI_SELECTED // 검색 조건
+				);
+				if (g_nSelectedScoreIndex == -1) {
+					// 
+				}
+				else {
+					char course[Max_Account_Text];
+					ListView_GetItemText(nmttdispinfo->hdr.hwndFrom, g_nSelectedScoreIndex, 0, course, Max_Account_Text);
+					log(course);
+				}
+
+				UpdateScoreDeleteButtonState(hWnd);
 			}
 		}
 		break;
@@ -159,7 +232,7 @@ INT_PTR CALLBACK MainDlgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 
 			g_nSelectedStudentIndex = -1;
 			UpdateStudentsListView(hWnd);
-			UpdateDeleteButtonState(hWnd, g_nSelectedStudentIndex != -1);
+			UpdateStudentDeleteButtonState(hWnd);
 		}
 		break;
 
@@ -189,7 +262,70 @@ INT_PTR CALLBACK MainDlgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 				SetDlgItemText(hWnd, IDC_EDIT1, "");
 				SetDlgItemText(hWnd, IDC_EDIT2, "");
 			}
-			
+
+		}
+		break;
+
+		case IDC_RADIO1: // 학기 라디오 버튼
+		case IDC_RADIO2:
+		case IDC_RADIO3:
+		case IDC_RADIO4:
+		{
+			int radioIndex = GetSemesterIndexById(LOWORD(wParam));
+
+			SelectSemester(hWnd, radioIndex);
+
+			g_nSelectedScoreIndex = -1;
+			UpdateScoreListView(hWnd);
+			UpdateScoreDeleteButtonState(hWnd);
+		}
+		break;
+
+		case IDC_BUTTON5: // 성적 추가 버튼
+		{
+			LRESULT rCourse = SendMessage(GetDlgItem(hWnd, IDC_EDIT6), WM_GETTEXTLENGTH, 0, 0);
+			LRESULT rPoint = SendMessage(GetDlgItem(hWnd, IDC_EDIT7), WM_GETTEXTLENGTH, 0, 0);
+
+			if (rCourse == 0 || rPoint == 0) {
+				MessageBox(hWnd, "input course or point", "input", MB_OK);
+			}
+			else {
+				char course[Max_Account_Text];
+				char point[Max_Account_Text];
+				GetDlgItemText(hWnd, IDC_EDIT6, course, Max_Account_Text);
+				GetDlgItemText(hWnd, IDC_EDIT7, point, Max_Account_Text);
+
+				Score score = { course, point };
+				g_scoreList.AddScore(&score);
+
+				UpdateScoreListView(hWnd);
+
+				SetDlgItemText(hWnd, IDC_EDIT6, "");
+				SetDlgItemText(hWnd, IDC_EDIT7, "");
+			}
+
+		}
+		break;
+
+		case IDC_BUTTON6: // 성적 삭제 버튼
+		{
+			g_scoreList.RemoveScore(g_nSelectedScoreIndex);
+
+			g_nSelectedScoreIndex = -1;
+			UpdateScoreListView(hWnd);
+			UpdateScoreDeleteButtonState(hWnd);
+		}
+		break;
+
+		case IDC_BUTTON7: // 성적 저장 버튼
+		{
+			// 학생 선택 확인
+			if (g_nSelectedSemesterIndex == -1) {
+				break;
+			}
+
+			// 학생 Id, 학기 정보로 현재 성적 리스트 파일로 저장
+			g_scoreList.SaveScores(g_selectedStudent.Id, g_nSelectedSemesterIndex);
 		}
 		break;
 
@@ -357,7 +493,7 @@ void SetWindowPositionToCenter(HWND hWnd) {
 	MoveWindow(hWnd, (screenX / 2) - (clientW / 2), (screenY / 2) - (clientH / 2), clientW, clientH, false);
 }
 
-void SetLoginInfo(HWND hWnd) {
+void UpdateLoginInfo(HWND hWnd) {
 	SetDlgItemText(hWnd, IDC_EDIT4, g_strLoginId);
 }
 
@@ -390,6 +526,69 @@ void UpdateStudentsListView(HWND hWnd)
 	}
 }
 
-void UpdateDeleteButtonState(HWND hWnd, bool bEnable) {
-	EnableWindow(GetDlgItem(hWnd, IDC_BUTTON2), bEnable);
+void UpdateStudentDeleteButtonState(HWND hWnd) {
+	EnableWindow(GetDlgItem(hWnd, IDC_BUTTON2), g_nSelectedStudentIndex != -1);
+}
+
+void UpdateSelectedStudentInfo(HWND hWnd) {
+	SetDlgItemText(hWnd, IDC_EDIT8, g_selectedStudent.Id);
+	SetDlgItemText(hWnd, IDC_EDIT9, g_selectedStudent.Name);
+
+	SelectSemester(hWnd, 0);
+}
+
+void UpdateScoreDeleteButtonState(HWND hWnd) {
+	EnableWindow(GetDlgItem(hWnd, IDC_BUTTON6), g_nSelectedScoreIndex != -1);
+}
+
+void SelectSemester(HWND hWnd, UINT index)
+{
+	CheckDlgButton(hWnd,
+		g_semesterRadioIds[index], // 컨트롤 ID
+		BST_CHECKED // 상태
+	);
+
+	g_nSelectedSemesterIndex = index;
+
+	// 학생과 학기가 선택됐다면 성적 파일을 읽어들임
+	g_scoreList.LoadScore(g_selectedStudent.Id, g_nSelectedSemesterIndex);
+}
+
+int GetSemesterIndexById(UINT id)
+{
+	for (size_t i = 0; i < Max_Semester; i++)
+	{
+		if (g_semesterRadioIds[i] == id) {
+			return i;
+		}
+	}
+}
+
+void UpdateScoreListView(HWND hWnd)
+{
+	HWND hListView = GetDlgItem(hWnd, IDC_LIST2);
+
+	ListView_DeleteAllItems(hListView);
+
+	// 아이템 추가
+	LVITEM item = {};
+	item.mask = LVIF_TEXT;
+	item.iSubItem = 0; // 아이템을 처음 추가하므로 0번째 서브아이템을 선택한다.
+	item.state;
+	item.stateMask;
+	int itemCount = 0;
+
+	auto scores = g_scoreList.GetScores();
+	vector<Score>::iterator it = scores->begin();
+	while (it != scores->end())
+	{
+		itemCount = ListView_GetItemCount(hListView);
+
+		item.iItem = itemCount;
+		item.pszText = it->Course;
+		ListView_InsertItem(hListView, &item); // 아이템 추가0
+		ListView_SetItemText(hListView, itemCount/*item idx*/, 1/*subitem idx*/, it->Point); // 서브아이템 추가0
+
+		++it;
+	}
 }

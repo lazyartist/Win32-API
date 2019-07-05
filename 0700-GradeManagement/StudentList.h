@@ -21,6 +21,6 @@ public:
 	vector<Student>* GetStudents();
 
 private:
-	vector<Student> g_vStudents;
+	vector<Student> _vStudents;
 };
 

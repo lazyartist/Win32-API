@@ -23,7 +23,7 @@ void StudentList::LoadStudents(const char * filePath)
 	FILE *file;
 	file = _fsopen(filePath, "rt", _SH_DENYNO/*Permits read and write access.*/);
 
-	char studentsFileInfo[Max_Student_File_Info] = {};
+	char studentsFileInfo[Max_Student_Info_Line] = {};
 	fgets(studentsFileInfo, Max_Student_Info_Line, file);
 	int studentsCount = atoi(studentsFileInfo);
 
@@ -33,8 +33,8 @@ void StudentList::LoadStudents(const char * filePath)
 	char *token;
 	char *nextToken;
 
-	g_vStudents.clear();
-	g_vStudents.reserve(studentsCount); // 메모리 미리 할당
+	_vStudents.clear();
+	_vStudents.reserve(studentsCount); // 메모리 미리 할당
 
 	for (size_t i = 0; i < studentsCount; i++)
 	{
@@ -49,11 +49,7 @@ void StudentList::LoadStudents(const char * filePath)
 		id[strcspn(id, "\n")] = 0;
 		name[strcspn(name, "\n")] = 0;
 
-		Student student = {};
-		strcpy_s(student.Id, id);
-		strcpy_s(student.Name, name);
-
-		g_vStudents.push_back(student);
+		AddStudent(id, name);
 	}
 }
 
@@ -67,13 +63,13 @@ void StudentList::SaveStudents()
 		char buffer[Max_Student_Info_Line];
 
 		// 학생 수 기록
-		int itemCount = g_vStudents.size();
+		int itemCount = _vStudents.size();
 		sprintf_s(buffer, Max_Student_Info_Line, "%d\n", itemCount);
 		fputs(buffer, file);
 
 		// 학생 정보 기록
-		auto it = g_vStudents.begin();
-		while (it != g_vStudents.end())
+		auto it = _vStudents.begin();
+		while (it != _vStudents.end())
 		{
 			sprintf_s(buffer, Max_Student_Info_Line, "%s\t%s\n", it->Id, it->Name);
 			fputs(buffer, file);
@@ -90,7 +86,7 @@ void StudentList::SaveStudents()
 
 void StudentList::ClearStudents()
 {
-	g_vStudents.clear();
+	_vStudents.clear();
 }
 
 void StudentList::AddStudent(char *id, char *name)
@@ -99,19 +95,19 @@ void StudentList::AddStudent(char *id, char *name)
 	strcpy_s(student.Id, id);
 	strcpy_s(student.Name, name);
 
-	g_vStudents.push_back(student);
+	_vStudents.push_back(student);
 }
 
 void StudentList::RemoveStudent(int index)
 {
 	if (index != -1) {
-		auto itBegin = g_vStudents.begin();
+		auto itBegin = _vStudents.begin();
 		auto itTarget = itBegin + index;
-		g_vStudents.erase(itTarget);
+		_vStudents.erase(itTarget);
 	}
 }
 
 vector<Student>* StudentList::GetStudents()
 {
-	return &g_vStudents;
+	return &_vStudents;
 }
