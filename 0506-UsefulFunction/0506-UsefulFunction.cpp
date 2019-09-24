@@ -237,7 +237,7 @@ INT_PTR CALLBACK ImageDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
 
 		// ===== SetROP2() =====
 		// 현재 비트맵에 새로 그려지는 그림의 겹쳐지는 방식을 설정
-		SetROP2(hdc, R2_NOTXORPEN); // 외곽은 검은색, 내부는 비어있는 사각형
+		SetROP2(hdc, R2_MASKPEN); // 외곽은 검은색, 내부는 비어있는 사각형
 		// ===== SetROP2() ===== end
 
 

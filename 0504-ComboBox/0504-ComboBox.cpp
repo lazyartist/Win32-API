@@ -24,6 +24,8 @@ INT_PTR CALLBACK DialogProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 	{
 		g_hCombo = GetDlgItem(hWnd, IDC_COMBO1);
 		ComboBox_AddString(g_hCombo, "a1");
+		ComboBox_SetCurSel(g_hCombo, 0);
+
 		ShowCurrentComboIndex(hWnd);
 	}
 	break;
